@@ -12,7 +12,7 @@ import {
 } from '@ant-design/pro-components';
 import { Button, Drawer, Input, message } from 'antd';
 import React, { useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'umi';
+import { FormattedMessage, Link, useIntl } from 'umi';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
 
@@ -111,133 +111,56 @@ const TableList: React.FC = () => {
     {
       title: (
         <FormattedMessage
-          id="pages.searchTable.updateForm.ruleName.nameLabel"
-          defaultMessage="Rule name"
+          id="pages.searchTable.updateForm.ruleName.nameLabel1"
+          defaultMessage="商品ID"
         />
       ),
-      dataIndex: 'name',
-      tip: 'The rule name is the unique key',
+      dataIndex: 'goodsId',
       render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
+        return <Link to={'/products/' + entity.goodsId}>{dom}</Link>;
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleDesc" defaultMessage="Description" />,
-      dataIndex: 'desc',
+      title: <FormattedMessage id="pages.searchTable.titleDesc2" defaultMessage="商品名称" />,
+      dataIndex: 'goodsName',
       valueType: 'textarea',
     },
     {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.titleCallNo"
-          defaultMessage="Number of service calls"
-        />
-      ),
-      dataIndex: 'callNo',
+      title: <FormattedMessage id="pages.searchTable.titleCallNo2" defaultMessage="商品SN" />,
+      dataIndex: 'goodsSn',
       sorter: true,
       hideInForm: true,
-      renderText: (val: string) =>
-        `${val}${intl.formatMessage({
-          id: 'pages.searchTable.tenThousand',
-          defaultMessage: ' 万 ',
-        })}`,
     },
     {
       title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="Status" />,
       dataIndex: 'status',
       hideInForm: true,
       valueEnum: {
-        0: {
-          text: (
-            <FormattedMessage
-              id="pages.searchTable.nameStatus.default"
-              defaultMessage="Shut down"
-            />
-          ),
-          status: 'Default',
-        },
         1: {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="Running" />
-          ),
-          status: 'Processing',
-        },
-        2: {
-          text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="Online" />
+            <FormattedMessage id="pages.searchTable.nameStatus.online1" defaultMessage="启用" />
           ),
           status: 'Success',
         },
-        3: {
+        0: {
           text: (
-            <FormattedMessage
-              id="pages.searchTable.nameStatus.abnormal"
-              defaultMessage="Abnormal"
-            />
+            <FormattedMessage id="pages.searchTable.nameStatus.abnormal1" defaultMessage="禁用" />
           ),
           status: 'Error',
         },
       },
     },
     {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.titleUpdatedAt"
-          defaultMessage="Last scheduled time"
-        />
-      ),
+      title: <FormattedMessage id="pages.searchTable.titleUpdatedAt1" defaultMessage="备注" />,
       sorter: true,
-      dataIndex: 'updatedAt',
-      valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
-        }
-        if (`${status}` === '3') {
-          return (
-            <Input
-              {...rest}
-              placeholder={intl.formatMessage({
-                id: 'pages.searchTable.exception',
-                defaultMessage: 'Please enter the reason for the exception!',
-              })}
-            />
-          );
-        }
-        return defaultRender(item);
-      },
+      dataIndex: 'remark',
+      valueType: 'textarea',
     },
     {
       title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record) => [
-        <a
-          key="config"
-          onClick={() => {
-            handleUpdateModalVisible(true);
-            setCurrentRow(record);
-          }}
-        >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
-        </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage
-            id="pages.searchTable.subscribeAlert"
-            defaultMessage="Subscribe to alerts"
-          />
-        </a>,
-      ],
+      render: (_, record) => [<Link to={'/products/' + record.goodsId}>查看详情</Link>],
     },
   ];
 
@@ -313,8 +236,8 @@ const TableList: React.FC = () => {
       )}
       <ModalForm
         title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: 'New rule',
+          id: 'pages.searchTable.createForm.newRule1',
+          defaultMessage: '新建商品',
         })}
         width="400px"
         visible={createModalVisible}
@@ -334,17 +257,29 @@ const TableList: React.FC = () => {
             {
               required: true,
               message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
+                <FormattedMessage id="pages.searchTable.ruleName1" defaultMessage="商品SN必填" />
               ),
             },
           ]}
           width="md"
-          name="name"
+          name="goodsSn"
+          placeholder="请输入商品SN"
         />
-        <ProFormTextArea width="md" name="desc" />
+
+        <ProFormText
+          rules={[
+            {
+              required: true,
+              message: (
+                <FormattedMessage id="pages.searchTable.ruleName1" defaultMessage="商品名称必填" />
+              ),
+            },
+          ]}
+          width="md"
+          name="goodsName"
+          placeholder="请输入商品名称"
+        />
+        <ProFormTextArea width="md" name="remark" placeholder="请输入商品备注信息" />
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {

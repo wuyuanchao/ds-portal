@@ -32,6 +32,12 @@
     component: './TableList',
   },
   {
+    path: '/products/:goodsId',
+    name: '商品详情',
+    hideInMenu: true,
+    component: './TableList/detail',
+  },
+  {
     path: '/welcome',
     component: './Welcome',
   },
