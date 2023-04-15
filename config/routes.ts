@@ -29,7 +29,7 @@
     path: '/products',
     name: 'products',
     icon: 'table',
-    component: './TableList',
+    component: './GoodsList',
   },
   {
     path: '/products/:goodsId',

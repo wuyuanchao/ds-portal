@@ -2,6 +2,13 @@
 /* eslint-disable */
 
 declare namespace API {
+  type Goods = {
+    sn: string;
+    imageUrl: string;
+    desc?: string;
+    createdAt: string;
+  };
+
   type Inquiry = {
     name: string;
     customer: string;
@@ -60,6 +67,20 @@ declare namespace API {
   type PageParams = {
     current?: number;
     pageSize?: number;
+  };
+
+  type GoodsListItem = {
+    sn?: string;
+    name?: string;
+    href?: string;
+    imageUrl?: string;
+    desc?: string;
+    callNo?: number;
+    status?: number;
+    updatedAt?: string;
+    createdAt?: string;
+    progress?: number;
+    disabled?: boolean;
   };
 
   type RuleListItem = {
