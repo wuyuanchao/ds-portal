@@ -16,14 +16,13 @@ const genList = (current: number, pageSize: number) => {
         'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
         'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
       ][i % 2],
-      name: `TradeCode ${index}`,
-      owner: '曲丽丽',
-      desc: '这是一段描述',
-      callNo: Math.floor(Math.random() * 1000),
-      status: Math.floor(Math.random() * 10) % 4,
+      goodsName: `商品名称 ${index}`,
+      goodsId: index * 20,
+      goodsSn: `SN ${index}`,
+      remark: `这是备注信息 ${index}`,
+      status: Math.floor(Math.random() * 10) % 2,
       updatedAt: moment().format('YYYY-MM-DD'),
       createdAt: moment().format('YYYY-MM-DD'),
-      progress: Math.ceil(Math.random() * 100),
     });
   }
   tableListDataSource.reverse();
