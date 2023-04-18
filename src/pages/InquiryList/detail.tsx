@@ -1,3 +1,5 @@
+import { getById } from '@/services/ant-design-pro/inquiry';
+
 import { useParams } from 'umi';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import {
@@ -26,7 +28,7 @@ import {
 } from 'antd';
 import styles from './style.less';
 import OperationModal from './components/OperationModal';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 type InquiryItem = {
@@ -50,6 +52,7 @@ const ListContent = ({ data: { name, link, tag, goodsSn } }: { data: InquiryItem
 );
 
 const DetailPage: FC = () => {
+  const [inqueryDetail, setInqueryDetail] = useState<API.InquiryDetail>();
   const [done, setDone] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<InquiryItem> | undefined>(undefined);
@@ -80,50 +83,17 @@ const DetailPage: FC = () => {
   };
 
   const params = useParams();
-  console.log(params);
 
-  const inqueryDetail: API.InquiryDetail =
-    params.name == 'Key-product'
-      ? {
-          id: '1',
-          name: 'Key-product',
-          contact: '客户A 联系电话：13867623527',
-          createdAt: '2023-04-03',
-          items: [
-            {
-              id: '1',
-              name: 'E5401-Suction Cup Whetstone',
-              link: 'https://www.clickpickme.co/products/suction-cup-whetstone-1',
-              goodsSn: 'YISH723S',
-              tag: 'RTS',
-            },
-          ],
-        }
-      : {
-          id: '2',
-          name: 'Precheck',
-          contact: '客户B QQ：456321',
-          createdAt: '2023-04-01',
-          items: [
-            {
-              id: '2',
-              name: 'Tank With Built-In Bra',
-              link: 'https://www.brayou.co/products/tank-with-built-in-bra-50-off-limited-time-only',
-            },
-            {
-              id: '3',
-              name: "Men's Ethnic Style Linen Long-Sleeved T-Shirt",
-              link: 'https://www.koolmate.co/products/men-s-ethnic-style-linen-long-sleeved-t-shirt-50-off-limited-time-only',
-            },
-          ],
-        };
-  console.log(inqueryDetail);
+  useEffect(() => {
+    console.log(params);
+    getById(params.name).then((x) => setInqueryDetail(x));
+  }, []);
 
   const paginationProps = {
     showSizeChanger: true,
     showQuickJumper: true,
     pageSize: 5,
-    total: inqueryDetail.items.length,
+    total: inqueryDetail?.items?.length,
   };
 
   const MoreBtn: React.FC<{
@@ -202,13 +172,13 @@ const DetailPage: FC = () => {
     <div>
       <PageContainer>
         <Card bordered={false}>
-          <Descriptions title={'单号：' + inqueryDetail.name}>
-            <Descriptions.Item label="客户信息">{inqueryDetail.contact}</Descriptions.Item>
-            <Descriptions.Item label="创建时间">{inqueryDetail.createdAt}</Descriptions.Item>
+          <Descriptions title={'单号：' + inqueryDetail?.name}>
+            <Descriptions.Item label="客户信息">{inqueryDetail?.contact}</Descriptions.Item>
+            <Descriptions.Item label="创建时间">{inqueryDetail?.createdAt}</Descriptions.Item>
           </Descriptions>
           <Divider style={{ marginBottom: 32 }} />
 
-          <Table rowKey="id" dataSource={inqueryDetail.items} columns={columns} />
+          <Table rowKey="id" dataSource={inqueryDetail?.items} columns={columns} />
         </Card>
       </PageContainer>
       <Button

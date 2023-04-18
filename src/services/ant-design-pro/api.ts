@@ -4,18 +4,26 @@ import { request } from 'umi';
 
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
+  const loginResult = JSON.parse(localStorage.getItem('user'));
   return request<{
     data: API.CurrentUser;
   }>('/api/currentUser', {
     method: 'GET',
+    headers: {
+      token: loginResult.token,
+    },
     ...(options || {}),
   });
 }
 
 /** 退出登录接口 POST /api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
+  const loginResult = JSON.parse(localStorage.getItem('user'));
   return request<Record<string, any>>('/api/login/outLogin', {
     method: 'POST',
+    headers: {
+      token: loginResult.token,
+    },
     ...(options || {}),
   });
 }

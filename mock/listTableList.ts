@@ -168,8 +168,13 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
 }
 
 let inquiries: API.Inquiry[] = [
-  { name: 'Key-product', customer: '客户A 联系电话：13867623527', createdAt: '2023-04-03' },
-  { name: 'Precheck', customer: '客户B QQ：456321', createdAt: '2023-04-01' },
+  {
+    id: '1',
+    name: 'Key-product',
+    customer: '客户A 联系电话：13867623527',
+    createdAt: '2023-04-03',
+  },
+  { id: '2', name: 'Precheck', customer: '客户B QQ：456321', createdAt: '2023-04-01' },
 ];
 
 function getInquiryList(req: Request, res: Response, u: string) {
@@ -190,4 +195,38 @@ export default {
   'GET /api/rule': getRule,
   'POST /api/rule': postRule,
   'GET /api/inquiry': getInquiryList,
+  'POST /api/inquiry': { success: true },
+  'GET /api/inquiry/Key-product': {
+    id: '1',
+    name: 'Key-product',
+    contact: '客户A 联系电话：13867623527',
+    createdAt: '2023-04-03',
+    items: [
+      {
+        id: '1',
+        name: 'E5401-Suction Cup Whetstone',
+        link: 'https://www.clickpickme.co/products/suction-cup-whetstone-1',
+        goodsSn: 'YISH723S',
+        tag: 'RTS',
+      },
+    ],
+  },
+  'GET /api/inquiry/Precheck': {
+    id: '2',
+    name: 'Precheck',
+    contact: '客户B QQ：456321',
+    createdAt: '2023-04-01',
+    items: [
+      {
+        id: '2',
+        name: 'Tank With Built-In Bra',
+        link: 'https://www.brayou.co/products/tank-with-built-in-bra-50-off-limited-time-only',
+      },
+      {
+        id: '3',
+        name: "Men's Ethnic Style Linen Long-Sleeved T-Shirt",
+        link: 'https://www.koolmate.co/products/men-s-ethnic-style-linen-long-sleeved-t-shirt-50-off-limited-time-only',
+      },
+    ],
+  },
 };

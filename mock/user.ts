@@ -44,7 +44,7 @@ export default {
     res.send({
       success: true,
       data: {
-        name: 'Yuanchao Wu',
+        name: req.headers.token == 'admin123456-encoded' ? 'admin' : 'Yuanchao Wu',
         avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
         userid: '00000001',
         email: 'antdesign@alipay.com',
@@ -122,6 +122,7 @@ export default {
     await waitTime(2000);
     if (password === '123456' && username === 'admin') {
       res.send({
+        token: 'admin123456-encoded',
         status: 'ok',
         type,
         currentAuthority: 'admin',
@@ -131,6 +132,7 @@ export default {
     }
     if (password === '123456' && username === 'user') {
       res.send({
+        token: 'user123456-encoded',
         status: 'ok',
         type,
         currentAuthority: 'user',
@@ -140,6 +142,7 @@ export default {
     }
     if (type === 'mobile') {
       res.send({
+        token: 'admin123456-encoded',
         status: 'ok',
         type,
         currentAuthority: 'admin',
