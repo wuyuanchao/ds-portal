@@ -40,3 +40,18 @@ export async function getInquiryList(
 
   return respData;
 }
+
+export async function handleAdd(inquiry: API.Inquiry) {
+  return request<API.Inquiry>('/api/inquiry', {
+    method: 'POST',
+    data: inquiry,
+  });
+}
+
+export async function handleRemove(inquiries: API.Inquiry[]) {}
+
+export async function getById(id: string) {
+  return request<API.Inquiry>('/api/inquiry/' + id, {
+    method: 'GET',
+  });
+}

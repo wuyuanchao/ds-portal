@@ -1,6 +1,6 @@
 export default {
   'pages.inquiry.create': '新建询价需求',
-
+  'pages.inquiry.table.title': '询价需求列表',
   'pages.layouts.userLayout.title':
     '桃花坞里桃花庵，桃花庵里桃花仙。桃花仙人种桃树，又折花枝当酒钱。',
   'pages.login.accountLogin.tab': '账户密码登录',

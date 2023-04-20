@@ -1,20 +1,16 @@
-import { getInquiryList } from '@/services/ant-design-pro/inquiry';
+import { getInquiryList, handleAdd } from '@/services/ant-design-pro/inquiry';
 import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
-  FooterToolbar,
   ModalForm,
   PageContainer,
-  ProDescriptions,
   ProFormText,
   ProFormTextArea,
   ProTable,
 } from '@ant-design/pro-components';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button } from 'antd';
 import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl, Link, history } from 'umi';
-import type { FormValueType } from './components/UpdateForm';
-import UpdateForm from './components/UpdateForm';
 import moment from 'moment';
 
 const InquiryList: React.FC = () => {
@@ -25,8 +21,8 @@ const InquiryList: React.FC = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.Inquiry>();
+  const [selectedRowsState, setSelectedRows] = useState<API.Inquiry[]>([]);
 
   /**
    * @en-US International configuration
@@ -86,8 +82,8 @@ const InquiryList: React.FC = () => {
     <PageContainer>
       <ProTable<API.Inquiry, API.PageParams>
         headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
-          defaultMessage: 'Enquiry form',
+          id: 'pages.inquiry.table.title',
+          defaultMessage: '询价需求列表',
         })}
         actionRef={actionRef}
         rowKey="enquiryOrderId"
@@ -113,45 +109,6 @@ const InquiryList: React.FC = () => {
           },
         }}
       />
-      {selectedRowsState?.length > 0 && (
-        <FooterToolbar
-          extra={
-            <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
-              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
-              &nbsp;&nbsp;
-              <span>
-                <FormattedMessage
-                  id="pages.searchTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
-              </span>
-            </div>
-          }
-        >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            <FormattedMessage
-              id="pages.searchTable.batchDeletion"
-              defaultMessage="Batch deletion"
-            />
-          </Button>
-          <Button type="primary">
-            <FormattedMessage
-              id="pages.searchTable.batchApproval"
-              defaultMessage="Batch approval"
-            />
-          </Button>
-        </FooterToolbar>
-      )}
       <ModalForm
         title={intl.formatMessage({
           id: 'pages.inquiry.create',
@@ -161,7 +118,7 @@ const InquiryList: React.FC = () => {
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
+          const success = await handleAdd(value as API.Inquiry);
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {
@@ -181,7 +138,7 @@ const InquiryList: React.FC = () => {
           name="name"
           label="询价单编号"
         />
-        <ProFormTextArea label="客户信息" width="md" name="desc" />
+        <ProFormTextArea label="客户信息" width="md" name="customer" />
       </ModalForm>
     </PageContainer>
   );
