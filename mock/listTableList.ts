@@ -169,12 +169,19 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
 
 let inquiries: API.Inquiry[] = [
   {
-    id: '1',
-    name: 'Key-product',
-    customer: '客户A 联系电话：13867623527',
-    createdAt: '2023-04-03',
+    enquiryOrderId: 1,
+    enquiryOrderSn: 'Key-product',
+    enquiryOrderName: 'Key-product',
+    customerInfo: '客户A 联系电话：13867623527',
+    gmtCreated: '1681912100',
   },
-  { id: '2', name: 'Precheck', customer: '客户B QQ：456321', createdAt: '2023-04-01' },
+  {
+    enquiryOrderId: 2,
+    enquiryOrderSn: 'Key-product',
+    enquiryOrderName: 'Precheck',
+    customerInfo: '客户B QQ：456321',
+    gmtCreated: '1682776099',
+  },
 ];
 
 function getInquiryList(req: Request, res: Response, u: string) {
@@ -194,8 +201,8 @@ function getInquiryList(req: Request, res: Response, u: string) {
 export default {
   'GET /api/rule': getRule,
   'POST /api/rule': postRule,
-  'GET /api/inquiry': getInquiryList,
-  'POST /api/inquiry': { success: true },
+  // 'GET /api/inquiry': getInquiryList,
+  // 'POST /api/inquiry': { success: true },
   'GET /api/inquiry/Key-product': {
     id: '1',
     name: 'Key-product',

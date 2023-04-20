@@ -1,4 +1,4 @@
-import { queryList, handleAdd } from '@/services/ant-design-pro/inquiry';
+import { getInquiryList, handleAdd } from '@/services/ant-design-pro/inquiry';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
@@ -11,6 +11,7 @@ import {
 import { Button } from 'antd';
 import React, { useRef, useState } from 'react';
 import { FormattedMessage, useIntl, Link, history } from 'umi';
+import moment from 'moment';
 
 const InquiryList: React.FC = () => {
   /**
@@ -32,22 +33,33 @@ const InquiryList: React.FC = () => {
   const columns: ProColumns<API.Inquiry>[] = [
     {
       title: <FormattedMessage id="pages.inquiry.table.col.sn" defaultMessage="询价单号" />,
-      dataIndex: 'name',
+      dataIndex: 'enquiryOrderSn',
       tip: '询价单识别编号',
       render: (dom, entity) => {
-        return <Link to={'/inquiries/' + entity.name}>{dom}</Link>;
+        return <Link to={'/inquiries/' + entity.enquiryOrderSn}>{dom}</Link>;
       },
     },
     {
+      title: (
+        <FormattedMessage
+          id="pages.inquiry.table.col.enquiryOrderName"
+          defaultMessage="询价单名称"
+        />
+      ),
+      dataIndex: 'enquiryOrderName',
+      valueType: 'textarea',
+    },
+    {
       title: <FormattedMessage id="pages.inquiry.table.col.customer" defaultMessage="客户信息" />,
-      dataIndex: 'customer',
+      dataIndex: 'customerInfo',
       valueType: 'textarea',
     },
     {
       title: <FormattedMessage id="pages.inquiry.table.col.createdAt" defaultMessage="创建时间" />,
       sorter: true,
-      dataIndex: 'createdAt',
-      valueType: 'dateTime',
+      dataIndex: 'gmtCreated',
+      valueType: 'number',
+      render: (_, record) => [moment(record.gmtCreated * 1000).format('YYYY-MM-DD HH:mm:ss')],
     },
     {
       title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
@@ -74,7 +86,7 @@ const InquiryList: React.FC = () => {
           defaultMessage: '询价需求列表',
         })}
         actionRef={actionRef}
-        rowKey="name"
+        rowKey="enquiryOrderId"
         search={{
           labelWidth: 120,
         }}
@@ -89,7 +101,7 @@ const InquiryList: React.FC = () => {
             <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={queryList}
+        request={getInquiryList}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
