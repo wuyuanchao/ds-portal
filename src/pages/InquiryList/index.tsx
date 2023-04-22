@@ -135,10 +135,11 @@ const InquiryList: React.FC = () => {
             },
           ]}
           width="md"
-          name="name"
+          name="enquiryOrderSn"
           label="询价单编号"
         />
-        <ProFormTextArea label="客户信息" width="md" name="customer" />
+        <ProFormText name="enquiryOrderName" width="md" label="询价单名称" />
+        <ProFormTextArea label="客户信息" width="md" name="customerInfo" />
       </ModalForm>
     </PageContainer>
   );

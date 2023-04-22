@@ -42,7 +42,7 @@ export async function getInquiryList(
 }
 
 export async function handleAdd(inquiry: API.Inquiry) {
-  return request<API.Inquiry>('/api/inquiry', {
+  return request<API.Inquiry>('/api/enquiry/addEnquiryOrder', {
     method: 'POST',
     data: inquiry,
   });

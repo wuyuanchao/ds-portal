@@ -270,33 +270,6 @@ const DetailPage: FC = () => {
         onDone={handleDone}
         onSubmit={handleSubmit}
       />
-      <Modal title="关联商品" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{ requiredMarkValue: requiredMark }}
-          onValuesChange={({ requiredMarkValue }) => {
-            setRequiredMarkType(requiredMarkValue);
-          }}
-          requiredMark={true}
-        >
-          <Form.Item
-            label="标记"
-            name="requiredMarkValue"
-            required
-            tooltip={{ title: '选择一种关联标记', icon: <InfoCircleOutlined /> }}
-          >
-            <Radio.Group>
-              <Radio.Button value="RTS">RTS</Radio.Button>
-              <Radio.Button value="Similar">Similar</Radio.Button>
-              <Radio.Button value="WFP">WFP</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item label="商品SN" required={requiredMark != 'WFP'}>
-            <Input placeholder="填写商品库中的商品SN" />
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 };
