@@ -1,19 +1,10 @@
-import { getById } from '@/services/ant-design-pro/inquiry';
+import { getById, handleAddInquiryItem } from '@/services/ant-design-pro/inquiry';
 
 import { useParams } from 'umi';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import {
-  FooterToolbar,
-  ModalForm,
-  PageContainer,
-  ProDescriptions,
-  ProFormText,
-  ProFormTextArea,
-  ProTable,
-} from '@ant-design/pro-components';
+import { PageContainer } from '@ant-design/pro-components';
 import {
   Button,
-  List,
   Card,
   Descriptions,
   Divider,
@@ -26,7 +17,6 @@ import {
   Input,
   Tag,
 } from 'antd';
-import styles from './style.less';
 import OperationModal from './components/OperationModal';
 import React, { useEffect, useState } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -40,23 +30,10 @@ type InquiryItem = {
   goodsSn?: string;
 };
 
-const ListContent = ({ data: { name, link, tag, goodsSn } }: { data: InquiryItem }) => (
-  <div className={styles.listContent}>
-    <div className={styles.listContentItem}>
-      <p>{name}</p>
-    </div>
-    <div className={styles.listContentItem}>
-      <p>{link}</p>
-    </div>
-    <div className={styles.listContentItem}>{tag}</div>
-  </div>
-);
-
 const DetailPage: FC = () => {
-  const [inqueryDetail, setInqueryDetail] = useState<API.InquiryDetail>();
   const [done, setDone] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<Partial<InquiryItem> | undefined>(undefined);
+  const [current, setCurrent] = useState<Partial<API.InquiryDetail> | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [relationType, setRelationType] = useState('1');
   const [form] = Form.useForm();
@@ -71,36 +48,31 @@ const DetailPage: FC = () => {
     setIsModalOpen(true);
   };
 
-  const showEditModal = (item: InquiryItem) => {
-    setVisible(true);
-    setCurrent(item);
-  };
-
   const handleDone = () => {
     setDone(false);
     setVisible(false);
-    setCurrent({});
   };
 
   const handleSubmit = (values: InquiryItem) => {
-    setDone(true);
-    const method = values?.id ? 'update' : 'add';
-    //postRun(method, values);
+    handleAddInquiryItem(values).then((x) => {
+      console.log(x);
+      setDone(true);
+    });
   };
 
   const params = useParams();
 
   useEffect(() => {
     console.log(params);
-    getById(params.name).then((x) => setInqueryDetail(x));
-  }, []);
+    getById(params.name).then((x) => setCurrent(x));
+  }, [done]);
 
   const MoreBtn: React.FC<{
     item: InquiryItem;
   }> = ({ item }) => (
     <Dropdown
       overlay={
-        <Menu>
+        <Menu onClick={(x) => alert(x)}>
           <Menu.Item key="edit">编辑</Menu.Item>
           <Menu.Item key="delete">删除</Menu.Item>
         </Menu>
@@ -176,15 +148,15 @@ const DetailPage: FC = () => {
     <div>
       <PageContainer>
         <Card bordered={false}>
-          <Descriptions title={'单号：' + inqueryDetail?.enquiryOrderSn}>
-            <Descriptions.Item label="客户信息">{inqueryDetail?.customerInfo}</Descriptions.Item>
+          <Descriptions title={'单号：' + current?.enquiryOrderSn}>
+            <Descriptions.Item label="客户信息">{current?.customerInfo}</Descriptions.Item>
             <Descriptions.Item label="创建时间">
-              {moment(inqueryDetail?.gmtCreated * 1000).format('YYYY-MM-DD HH:mm:ss')}
+              {moment(current?.gmtCreated * 1000).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
           </Descriptions>
           <Divider style={{ marginBottom: 32 }} />
 
-          <Table rowKey="recId" dataSource={inqueryDetail?.orderGoodsList} columns={columns} />
+          <Table rowKey="recId" dataSource={current?.orderGoodsList} columns={columns} />
         </Card>
       </PageContainer>
       <Button

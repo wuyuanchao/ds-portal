@@ -20,8 +20,8 @@ declare namespace API {
     id: string;
     name: string;
     link: string;
-    tag: string;
-    goodsSn: string;
+    tag?: string;
+    goodsSn?: string;
   };
 
   type InquiryDetail = {

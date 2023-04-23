@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 import styles from '../style.less';
-import { Button, Result } from 'antd';
+import { Button, Result, Form, Input } from 'antd';
 
 type OperationModalProps = {
   done: boolean;
@@ -38,8 +38,9 @@ const OperationModal: FC<OperationModalProps> = (props) => {
     >
       {!done ? (
         <>
+          <ProFormText name="enquiryOrderId" label="订单号" disabled={true} />
           <ProFormText
-            name="name"
+            name="goodsName"
             label="商品名称"
             rules={[{ required: true, message: '请输入商品名称' }]}
             placeholder="请输入"

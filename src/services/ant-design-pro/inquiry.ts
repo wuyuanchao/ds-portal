@@ -51,6 +51,13 @@ export async function handleAdd(inquiry: API.Inquiry) {
   });
 }
 
+export async function handleAddInquiryItem(goods: API.InquiryItem) {
+  return request<API.Inquiry>('/api/enquiry/addEnquiryOrderGoods', {
+    method: 'POST',
+    data: goods,
+  });
+}
+
 export async function handleRemove(inquiries: API.Inquiry[]) {}
 
 export async function getById(id: number) {

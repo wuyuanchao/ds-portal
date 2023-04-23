@@ -10,7 +10,7 @@ import {
   EllipsisOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Avatar, List, Card, Col, Divider, Input, Row, Tag, Space, Table } from 'antd';
+import { Avatar, List, Card, Col, Divider, Input, Row, Tag, Space, Table, Image } from 'antd';
 import React, { useState, useRef } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import { Link, useRequest, useParams } from 'umi';
@@ -45,7 +45,23 @@ const operationTabList = [
   },
 ];
 
-const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
+const GoodsImgPreview: React.FC<{ imageList: string[] }> = ({ imageList }) => {
+  const [visible, setVisible] = useState(false);
+  return (
+    <>
+      <Image preview={{ visible: false }} src={imageList[0]} onClick={() => setVisible(true)} />
+      <div style={{ display: 'none' }}>
+        <Image.PreviewGroup preview={{ visible, onVisibleChange: (vis) => setVisible(vis) }}>
+          {imageList.map((imgUrl) => (
+            <Image src={imgUrl} />
+          ))}
+        </Image.PreviewGroup>
+      </div>
+    </>
+  );
+};
+
+const TagList: React.FC<{ tags: TagType }> = ({ tags }) => {
   const ref = useRef<Input | null>(null);
   const [newTags, setNewTags] = useState<TagType[]>([]);
   const [inputVisible, setInputVisible] = useState<boolean>(false);
@@ -77,7 +93,7 @@ const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
     <div className={styles.tags}>
       <div className={styles.tagsTitle}>标签</div>
       {(tags || []).concat(newTags).map((item) => (
-        <Tag key={item.key} color="red">
+        <Tag key={item.key} color={item.label}>
           {item.label}
         </Tag>
       ))}
@@ -129,18 +145,20 @@ const Center: React.FC<RouteChildrenProps> = () => {
   );
 
   const params = useParams();
-  const goodsImg =
-    params.goodsId != 'JDHDU806'
-      ? 'https://cbu01.alicdn.com/img/ibank/2020/419/044/19042440914_816944470.jpg'
-      : 'https://cbu01.alicdn.com/img/ibank/2019/531/659/10434956135_1177513472.jpg';
 
-  const skuItems =
-    params.goodsId != 'JDHDU806'
+  const goodsData =
+    params.goodsId == 'JDHDU806'
       ? {
           id: '1',
           name: 'Key-product',
-          contact: '客户A 联系电话：13867623527',
+          title: 'V亚马逊爆款 新款吸盘磨刀器 韩国迷你钨钢磨刀器 家用户外便携',
+          desc: '【品名】吸盘磨刀器【颜色】红色、蓝色、绿色、黄色【装箱数量】200套【外箱规格】54cmX33cmX35cm 【整箱毛重】抛重13公斤 ...',
           createdAt: '2023-04-03',
+          imageUrls: [
+            'https://cbu01.alicdn.com/img/ibank/2019/531/659/10434956135_1177513472.jpg',
+            'https://img.thesitebase.net/10117/10117508/products/ver_1/0x1296@165811681407fcc6da63.jpg',
+            'https://img.thesitebase.net/10117/10117508/products/ver_1/0x1296@165811681486ce20c88e.jpg',
+          ],
           items: [
             {
               id: '1',
@@ -154,8 +172,10 @@ const Center: React.FC<RouteChildrenProps> = () => {
       : {
           id: '2',
           name: 'SN19802',
-          contact: '这是一个商品名称',
+          title: 'V亚马逊爆款 新款吸盘磨刀器 韩国迷你钨钢磨刀器 家用户外便携',
+          desc: '【品名】吸盘磨刀器【颜色】红色、蓝色、绿色、黄色【装箱数量】200套【外箱规格】54cmX33cmX35cm 【整箱毛重】抛重13公斤 ...',
           createdAt: '客户B QQ：456321',
+          imageUrls: ['https://cbu01.alicdn.com/img/ibank/2020/419/044/19042440914_816944470.jpg'],
           items: [
             {
               skuId: 2,
@@ -252,7 +272,7 @@ const Center: React.FC<RouteChildrenProps> = () => {
   const renderChildrenByTabKey = (tabValue: tabKeyType) => {
     if (tabValue === 'skuList') {
       return (
-        <Table rowKey="id" dataSource={skuItems.items} columns={columns} scroll={{ x: 600 }} />
+        <Table rowKey="id" dataSource={goodsData.items} columns={columns} scroll={{ x: 600 }} />
       );
     }
     if (tabValue === 'records') {
@@ -300,8 +320,7 @@ const Center: React.FC<RouteChildrenProps> = () => {
       <Row gutter={24}>
         <Col lg={7} md={24}>
           <Card
-            style={{ width: 320 }}
-            cover={<img alt="example" src={goodsImg} />}
+            cover={<GoodsImgPreview imageList={goodsData.imageUrls} />}
             actions={[
               <SettingOutlined key="setting" />,
               <EditOutlined key="edit" />,
@@ -309,11 +328,10 @@ const Center: React.FC<RouteChildrenProps> = () => {
             ]}
           >
             <Meta
-              title="V亚马逊爆款 新款吸盘磨刀器 韩国迷你钨钢磨刀器 家用户外便携"
+              title={goodsData.title}
               description={
                 <>
-                  【品名】吸盘磨刀器【颜色】红色、蓝色、绿色、黄色【装箱数量】200套【外箱规格】54cmX33cmX35cm
-                  【整箱毛重】抛重13公斤 ...
+                  {goodsData.desc}
                   <Divider dashed />
                   <TagList tags={[{ key: 'red', label: 'red' }]} />
                 </>
