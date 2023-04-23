@@ -35,8 +35,9 @@ const InquiryList: React.FC = () => {
       title: <FormattedMessage id="pages.inquiry.table.col.sn" defaultMessage="询价单号" />,
       dataIndex: 'enquiryOrderSn',
       tip: '询价单识别编号',
+      width: 150,
       render: (dom, entity) => {
-        return <Link to={'/inquiries/' + entity.enquiryOrderSn}>{dom}</Link>;
+        return <Link to={'/inquiries/' + entity.enquiryOrderId}>{dom}</Link>;
       },
     },
     {
@@ -59,6 +60,7 @@ const InquiryList: React.FC = () => {
       sorter: true,
       dataIndex: 'gmtCreated',
       valueType: 'number',
+      search: false,
       render: (_, record) => [moment(record.gmtCreated * 1000).format('YYYY-MM-DD HH:mm:ss')],
     },
     {
@@ -69,7 +71,7 @@ const InquiryList: React.FC = () => {
         <a
           key="config"
           onClick={() => {
-            history.push('/inquiries/' + record.name);
+            history.push('/inquiries/' + record.enquiryOrderId);
           }}
         >
           <FormattedMessage id="pages.inquiry.table.col.detail" defaultMessage="查看详情" />

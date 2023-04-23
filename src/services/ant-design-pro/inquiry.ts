@@ -13,12 +13,15 @@ export async function getInquiryList(
   },
   options?: { [key: string]: any },
 ) {
+  console.log(params);
+
   const response = await request<API.Inquiry>('/api/enquiry/list', {
     method: 'POST',
     data: {
-      pageIndex: params.current,
-      pageSize: params.pageSize,
-      // ...params,
+      //todo: 此处因为分页组件固定传current，与服务端字段不一致，因此需要手动取值。理论上分页组件应该可以自定义页码参数的名称
+      // pageIndex: params.current,
+      // pageSize: params.pageSize,
+      ...params,
     },
     ...(options || {}),
   });
@@ -50,8 +53,9 @@ export async function handleAdd(inquiry: API.Inquiry) {
 
 export async function handleRemove(inquiries: API.Inquiry[]) {}
 
-export async function getById(id: string) {
-  return request<API.Inquiry>('/api/inquiry/' + id, {
+export async function getById(id: number) {
+  const response = await request<API.Inquiry>('/api/enquiry/detail/' + id, {
     method: 'GET',
   });
+  return response.data;
 }

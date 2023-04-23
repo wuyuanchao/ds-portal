@@ -30,6 +30,7 @@ import styles from './style.less';
 import OperationModal from './components/OperationModal';
 import React, { useEffect, useState } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 type InquiryItem = {
   id: string;
@@ -57,9 +58,14 @@ const DetailPage: FC = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<InquiryItem> | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [requiredMark, setRequiredMarkType] = useState('RTS');
+  const [relationType, setRelationType] = useState('1');
   const [form] = Form.useForm();
-  const tagColorMap = { RTS: 'green', Similar: 'blue', WFP: 'red' };
+  const tagEnumMap = {
+    '0': { text: '', color: '' },
+    '1': { text: 'RTS', color: 'green' },
+    '2': { text: 'Similar', color: 'blue' },
+    '3': { text: 'WFP', color: 'red' },
+  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -89,13 +95,6 @@ const DetailPage: FC = () => {
     getById(params.name).then((x) => setInqueryDetail(x));
   }, []);
 
-  const paginationProps = {
-    showSizeChanger: true,
-    showQuickJumper: true,
-    pageSize: 5,
-    total: inqueryDetail?.items?.length,
-  };
-
   const MoreBtn: React.FC<{
     item: InquiryItem;
   }> = ({ item }) => (
@@ -116,7 +115,7 @@ const DetailPage: FC = () => {
   const columns = [
     {
       title: '商品名称',
-      dataIndex: 'name',
+      dataIndex: 'goodsName',
     },
     {
       title: '商品链接',
@@ -128,11 +127,14 @@ const DetailPage: FC = () => {
     },
     {
       title: '关联标记',
-      dataIndex: 'tag',
+      dataIndex: 'relationType',
       render(text, record) {
+        if (text == 0) {
+          return;
+        }
         return (
-          <Tag color={tagColorMap[text]} key={record.id}>
-            {text}
+          <Tag color={tagEnumMap[text].color} key={record.recId}>
+            {tagEnumMap[text].text}
           </Tag>
         );
       },
@@ -162,6 +164,8 @@ const DetailPage: FC = () => {
 
   const handleOk = () => {
     setIsModalOpen(false);
+
+    console.log(form);
   };
 
   const handleCancel = () => {
@@ -172,13 +176,15 @@ const DetailPage: FC = () => {
     <div>
       <PageContainer>
         <Card bordered={false}>
-          <Descriptions title={'单号：' + inqueryDetail?.name}>
-            <Descriptions.Item label="客户信息">{inqueryDetail?.contact}</Descriptions.Item>
-            <Descriptions.Item label="创建时间">{inqueryDetail?.createdAt}</Descriptions.Item>
+          <Descriptions title={'单号：' + inqueryDetail?.enquiryOrderSn}>
+            <Descriptions.Item label="客户信息">{inqueryDetail?.customerInfo}</Descriptions.Item>
+            <Descriptions.Item label="创建时间">
+              {moment(inqueryDetail?.gmtCreated * 1000).format('YYYY-MM-DD HH:mm:ss')}
+            </Descriptions.Item>
           </Descriptions>
           <Divider style={{ marginBottom: 32 }} />
 
-          <Table rowKey="id" dataSource={inqueryDetail?.items} columns={columns} />
+          <Table rowKey="recId" dataSource={inqueryDetail?.orderGoodsList} columns={columns} />
         </Card>
       </PageContainer>
       <Button
@@ -202,25 +208,27 @@ const DetailPage: FC = () => {
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ requiredMarkValue: requiredMark }}
-          onValuesChange={({ requiredMarkValue }) => {
-            setRequiredMarkType(requiredMarkValue);
+          initialValues={{ relationTypeValue: relationType }}
+          onValuesChange={({ relationTypeValue }) => {
+            setRelationType(relationTypeValue);
           }}
           requiredMark={true}
         >
           <Form.Item
             label="标记"
-            name="requiredMarkValue"
+            name="relationType"
             required
             tooltip={{ title: '选择一种关联标记', icon: <InfoCircleOutlined /> }}
           >
             <Radio.Group>
-              <Radio.Button value="RTS">RTS</Radio.Button>
-              <Radio.Button value="Similar">Similar</Radio.Button>
-              <Radio.Button value="WFP">WFP</Radio.Button>
+              <Radio.Button value="1" defaultChecked={true}>
+                RTS
+              </Radio.Button>
+              <Radio.Button value="2">Similar</Radio.Button>
+              <Radio.Button value="3">WFP</Radio.Button>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="商品SN" required={requiredMark != 'WFP'}>
+          <Form.Item label="商品SN" required={relationType != '3'} name="goodsSn">
             <Input placeholder="填写商品库中的商品SN" />
           </Form.Item>
         </Form>
