@@ -58,7 +58,19 @@ export async function handleAddInquiryItem(goods: API.InquiryItem) {
   });
 }
 
-export async function handleRemove(inquiries: API.Inquiry[]) {}
+export async function handleDeleteInquiryItem(goods: API.InquiryItem) {
+  return request('/api/enquiry/deleteEnquiryOrderGoods', {
+    method: 'POST',
+    data: goods,
+  });
+}
+
+export async function handleBindRelation(relation) {
+  return request('/api/enquiry/updateGoodsSn', {
+    method: 'POST',
+    data: relation,
+  });
+}
 
 export async function getById(id: number) {
   const response = await request<API.Inquiry>('/api/enquiry/detail/' + id, {

@@ -1,4 +1,9 @@
-import { getById, handleAddInquiryItem } from '@/services/ant-design-pro/inquiry';
+import {
+  getById,
+  handleAddInquiryItem,
+  handleDeleteInquiryItem,
+  handleBindRelation,
+} from '@/services/ant-design-pro/inquiry';
 
 import { useParams } from 'umi';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
@@ -35,7 +40,6 @@ const DetailPage: FC = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<API.InquiryDetail> | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [relationType, setRelationType] = useState('1');
   const [form] = Form.useForm();
   const tagEnumMap = {
     '0': { text: '', color: '' },
@@ -69,20 +73,31 @@ const DetailPage: FC = () => {
 
   const MoreBtn: React.FC<{
     item: InquiryItem;
-  }> = ({ item }) => (
-    <Dropdown
-      overlay={
-        <Menu onClick={(x) => alert(x)}>
-          <Menu.Item key="edit">编辑</Menu.Item>
-          <Menu.Item key="delete">删除</Menu.Item>
-        </Menu>
+  }> = ({ item }) => {
+    const handleClick = ({ _, key }) => {
+      if (key == 'delete') {
+        handleDeleteInquiryItem(item);
+        setDone(true);
+      } else if (key == 'edit') {
+        alert('暂不支持。。。');
       }
-    >
-      <a>
-        更多 <DownOutlined />
-      </a>
-    </Dropdown>
-  );
+    };
+
+    return (
+      <Dropdown
+        overlay={
+          <Menu onClick={handleClick}>
+            <Menu.Item key="edit">编辑</Menu.Item>
+            <Menu.Item key="delete">删除</Menu.Item>
+          </Menu>
+        }
+      >
+        <a>
+          更多 <DownOutlined />
+        </a>
+      </Dropdown>
+    );
+  };
 
   const columns = [
     {
@@ -121,6 +136,8 @@ const DetailPage: FC = () => {
               key="edit"
               onClick={(e) => {
                 e.preventDefault();
+                console.log(record);
+                form.setFieldsValue(record);
                 showModal();
               }}
             >
@@ -135,9 +152,12 @@ const DetailPage: FC = () => {
   ];
 
   const handleOk = () => {
+    setDone(true);
+    handleBindRelation(form.getFieldsValue()).then((x) => {
+      console.log(x);
+      setDone(false);
+    });
     setIsModalOpen(false);
-
-    console.log(form);
   };
 
   const handleCancel = () => {
@@ -177,15 +197,10 @@ const DetailPage: FC = () => {
         onSubmit={handleSubmit}
       />
       <Modal title="关联商品" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{ relationTypeValue: relationType }}
-          onValuesChange={({ relationTypeValue }) => {
-            setRelationType(relationTypeValue);
-          }}
-          requiredMark={true}
-        >
+        <Form form={form} layout="vertical" requiredMark={true}>
+          <Form.Item name="recId" style={{ display: 'none' }}>
+            <Input hidden />
+          </Form.Item>
           <Form.Item
             label="标记"
             name="relationType"
@@ -193,14 +208,14 @@ const DetailPage: FC = () => {
             tooltip={{ title: '选择一种关联标记', icon: <InfoCircleOutlined /> }}
           >
             <Radio.Group>
-              <Radio.Button value="1" defaultChecked={true}>
+              <Radio.Button value={1} defaultChecked={true}>
                 RTS
               </Radio.Button>
-              <Radio.Button value="2">Similar</Radio.Button>
-              <Radio.Button value="3">WFP</Radio.Button>
+              <Radio.Button value={2}>Similar</Radio.Button>
+              <Radio.Button value={3}>WFP</Radio.Button>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="商品SN" required={relationType != '3'} name="goodsSn">
+          <Form.Item label="商品SN" required name="goodsSn">
             <Input placeholder="填写商品库中的商品SN" />
           </Form.Item>
         </Form>
